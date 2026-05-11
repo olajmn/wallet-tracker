@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "wallet-tracker-mobile",
-    "slug": "wallet-tracker-mobile",
+    "name": "WAGMI",
+    "slug": "wagmi",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

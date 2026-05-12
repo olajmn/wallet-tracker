@@ -114,25 +114,33 @@ async function _buildRealHistory(
     return priceMap.get(nearest) ?? 0;
   }
 
-  // Rekonstruer SOL-saldo bakover i tid fra nåværende saldo
-  let balance = currentSolBalance;
+  // Bygg historikk fremover fra første transaksjon
+  let balance = 0;
   const dailyBalances = new Map<string, number>();
-  dailyBalances.set(new Date().toISOString().slice(0, 10), balance);
 
-  for (const tx of transactions) {
+  for (const tx of [...transactions].reverse()) {
     const date = new Date(tx.timestamp * 1000).toISOString().slice(0, 10);
     for (const t of tx.nativeTransfers ?? []) {
-      if (t.toUserAccount === address)   balance -= t.amount / 1_000_000_000;
-      if (t.fromUserAccount === address) balance += t.amount / 1_000_000_000;
+      if (t.toUserAccount === address)   balance += t.amount / 1_000_000_000;
+      if (t.fromUserAccount === address) balance -= t.amount / 1_000_000_000;
     }
     dailyBalances.set(date, Math.max(0, balance));
   }
 
-  return [...dailyBalances.keys()]
+  dailyBalances.set(new Date().toISOString().slice(0, 10), currentSolBalance);
+
+  const points = [...dailyBalances.keys()]
     .sort()
     .map(date => ({
       date,
-      value: parseFloat(((dailyBalances.get(date) ?? 0) * priceFor(date)).toFixed(2)),
-    }))
-    .filter(p => p.value > 0);
+      value: parseFloat((dailyBalances.get(date) ?? 0).toFixed(4)),
+    }));
+
+  if (points.length === 0) return [];
+
+  const firstDate = new Date(points[0].date);
+  firstDate.setDate(firstDate.getDate() - 1);
+  const zeroDayStr = firstDate.toISOString().slice(0, 10);
+
+  return [{ date: zeroDayStr, value: 0 }, ...points];
 }

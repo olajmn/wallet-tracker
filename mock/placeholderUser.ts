@@ -1,5 +1,5 @@
 export const placeholderUser = {
-  name:     'BrandonXanax',
+  name:     'Username',
   handle:   '@gaylord',
   email:    '',
   bio:      '',

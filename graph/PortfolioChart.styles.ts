@@ -16,7 +16,13 @@ export const styles = StyleSheet.create({
   },
   change: {
     fontSize: 13, fontWeight: '700',
-    marginTop: 2, marginBottom: 12,
+    marginTop: 2, marginBottom: 4,
+    paddingHorizontal: 24,
+  },
+  startSum: {
+    fontSize: 11, fontWeight: '600',
+    color: '#444444',
+    marginBottom: 12,
     paddingHorizontal: 24,
   },
   chart: {},

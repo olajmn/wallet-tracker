@@ -10,11 +10,10 @@ type Props = {
   currentValue: number;
 };
 
-function fmtUSD(v: number): string {
-  if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(1)}M`;
-  if (v >= 1_000)     return `$${(v / 1_000).toFixed(1)}k`;
-  if (v >= 10)        return `$${Math.round(v)}`;
-  return `$${v.toFixed(2)}`;
+function fmtSOL(v: number): string {
+  if (v >= 1_000) return `${(v / 1_000).toFixed(1)}k◎`;
+  if (v >= 10)    return `${Math.round(v)}◎`;
+  return `${v.toFixed(2)}◎`;
 }
 
 function fmtDate(dateStr: string): string {
@@ -47,9 +46,9 @@ function buildSmoothPath(coords: { x: number; y: number }[]) {
 export default function PortfolioChart({ history, currentValue }: Props) {
   const gradId = useMemo(() => `grad_${Math.random().toString(36).slice(2)}`, []);
 
-  const startValue = history[0]?.value ?? currentValue;
-  const endValue   = history.length >= 2 ? history[history.length - 1].value : currentValue;
-  const change     = startValue > 0 ? ((endValue - startValue) / startValue) * 100 : 0;
+  const startValue = history.find(p => p.value > 0)?.value ?? 0;
+  const lastValue  = history.length >= 2 ? history[history.length - 1].value : startValue;
+  const change     = startValue > 0 ? ((lastValue - startValue) / startValue) * 100 : 0;
   const isPositive = change >= 0;
   const color      = isPositive ? '#00FF88' : '#FF4444';
 
@@ -72,9 +71,12 @@ export default function PortfolioChart({ history, currentValue }: Props) {
   return (
     <View style={styles.container}>
 
-      <Text style={styles.value}>${currentValue.toLocaleString()}</Text>
+      <Text style={styles.value}>${currentValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}</Text>
       <Text style={[styles.change, { color }]}>
         {isPositive ? '↑' : '↓'} {Math.abs(change).toFixed(1)}% since start
+      </Text>
+      <Text style={styles.startSum}>
+        started at {startValue.toFixed(2)}◎
       </Text>
 
       <Svg width={SCREEN_W} height={H} style={styles.chart}>
@@ -89,9 +91,9 @@ export default function PortfolioChart({ history, currentValue }: Props) {
         <Line x1={LABEL_W} y1={yMid} x2={SCREEN_W - PAD_R} y2={yMid} stroke="#1E1E1E" strokeWidth={1} />
         <Line x1={LABEL_W} y1={yBot} x2={SCREEN_W - PAD_R} y2={yBot} stroke="#1E1E1E" strokeWidth={1} />
 
-        <SvgText x={0} y={yTop + 4} fill="#444" fontSize={9} fontWeight="600">{fmtUSD(maxVal)}</SvgText>
-        <SvgText x={0} y={yMid + 4} fill="#444" fontSize={9} fontWeight="600">{fmtUSD(midVal)}</SvgText>
-        <SvgText x={0} y={yBot + 4} fill="#444" fontSize={9} fontWeight="600">{fmtUSD(minVal)}</SvgText>
+        <SvgText x={0} y={yTop + 4} fill="#444" fontSize={9} fontWeight="600">{fmtSOL(maxVal)}</SvgText>
+        <SvgText x={0} y={yMid + 4} fill="#444" fontSize={9} fontWeight="600">{fmtSOL(midVal)}</SvgText>
+        <SvgText x={0} y={yBot + 4} fill="#444" fontSize={9} fontWeight="600">{fmtSOL(minVal)}</SvgText>
 
         {fill ? <Path d={fill} fill={`url(#${gradId})`} /> : null}
         {line ? <Path d={line} stroke={color} strokeWidth={2} fill="none" /> : null}

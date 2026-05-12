@@ -12,7 +12,7 @@ type Props = {
   fallbackHistory: DataPoint[];
 };
 
-const cacheKey = (address: string) => `chart:v3:${address}`;
+const cacheKey = (address: string) => `chart:v7:${address}`;
 
 function mergeHistories(histories: DataPoint[][]): DataPoint[] {
   const allDates = [...new Set(histories.flatMap(h => h.map(p => p.date)))].sort();
@@ -53,7 +53,7 @@ export default function TotalChart({ wallets, totalUSD, fallbackHistory }: Props
     }
 
     load();
-  }, [addressKey]);
+  }, [addressKey, totalUSD]);
 
   return (
     <PortfolioChart

@@ -13,12 +13,13 @@ type Props = {
   fallbackHistory: DataPoint[];
 };
 
-const cacheKey = (address: string) => `chart:v3:${address}`;
+const cacheKey = (address: string) => `chart:v7:${address}`;
 
 export default function WalletChart({ address, solBalance, currentValue, fallbackHistory }: Props) {
   const [history, setHistory] = useState<DataPoint[] | null>(null);
 
   useEffect(() => {
+    if (solBalance === 0) return;
     async function load() {
       // Vis cachet historikk umiddelbart hvis det finnes
       const cached = await AsyncStorage.getItem(cacheKey(address));
@@ -42,7 +43,7 @@ export default function WalletChart({ address, solBalance, currentValue, fallbac
     }
 
     load();
-  }, [address]);
+  }, [address, solBalance]);
 
   if (history === null) {
     return (

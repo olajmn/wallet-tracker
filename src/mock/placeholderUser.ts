@@ -1,12 +1,10 @@
 export const placeholderUser = {
   name:     'Username',
-  handle:   '@gaylord',
+  handle:   '@username',
   email:    '',
   bio:      '',
   location: 'Oslo, Norway',
   joined:   '2025-08-12',
-  xp:       8400,
-  xpMax:    10000,
 };
 
 export const placeholderStats = {

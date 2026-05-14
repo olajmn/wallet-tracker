@@ -1,4 +1,5 @@
-import { createContext, useContext, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { placeholderUser } from '../mock/placeholderUser';
 
 export type UserData = {
@@ -18,8 +19,10 @@ const DEFAULT: UserData = {
   bio:      placeholderUser.bio,
   location: placeholderUser.location,
   joined:   placeholderUser.joined,
-  wallets: [],
+  wallets:  [],
 };
+
+const STORAGE_KEY = 'userData';
 
 type UserContextType = {
   userData:   UserData;
@@ -34,8 +37,16 @@ const UserContext = createContext<UserContextType>({
 export function UserProvider({ children }: { children: React.ReactNode }) {
   const [userData, setUserData] = useState<UserData>(DEFAULT);
 
+  useEffect(() => {
+    AsyncStorage.getItem(STORAGE_KEY).then(raw => {
+      if (raw) setUserData(JSON.parse(raw));
+    });
+  }, []);
+
   async function updateUser(data: Partial<UserData>) {
-    setUserData(prev => ({ ...prev, ...data }));
+    const updated = { ...userData, ...data };
+    setUserData(updated);
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
   }
 
   return (

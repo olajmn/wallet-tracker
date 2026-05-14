@@ -1,11 +1,11 @@
+import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { tabs } from './config/navigation';
-import { UserProvider } from './context/UserContext';
-import SettingsScreen from './screens/Settings/SettingsScreen';
-import WalletsScreen from './screens/Settings/WalletsScreen';
-import ProfileSettingsScreen from './screens/Settings/ProfileSettingsScreen';
+import { tabs } from './src/config/navigation';
+import { UserProvider } from './src/context/UserContext';
+import WalletsScreen from './src/screens/Settings/WalletsScreen';
+import ProfileSettingsScreen from './src/screens/Settings/ProfileSettingsScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -27,7 +27,16 @@ function TabNavigator() {
       }}
     >
       {tabs.map(tab => (
-        <Tab.Screen key={tab.name} name={tab.name} component={tab.component} />
+        <Tab.Screen
+          key={tab.name}
+          name={tab.name}
+          component={tab.component}
+          options={{
+            tabBarIcon: ({ color }) => (
+              <Text style={{ color, fontSize: 18 }}>{tab.icon}</Text>
+            ),
+          }}
+        />
       ))}
     </Tab.Navigator>
   );
@@ -39,7 +48,6 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Tabs" component={TabNavigator} />
-          <Stack.Screen name="Settings" component={SettingsScreen} />
           <Stack.Screen name="Wallets" component={WalletsScreen} />
           <Stack.Screen name="ProfileSettings" component={ProfileSettingsScreen} />
         </Stack.Navigator>

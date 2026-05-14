@@ -52,3 +52,4 @@ export async function fetchWalletData(address: string): Promise<WalletData> {
 
   return { address, solBalance, solUSD, tokens, totalUSD };
 }
+

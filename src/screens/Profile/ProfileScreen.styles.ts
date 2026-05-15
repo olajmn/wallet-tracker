@@ -36,7 +36,9 @@ export const styles = StyleSheet.create({
   handle: { color: '#444444', fontSize: font.sm, lineHeight: 16 },
   bio:    { color: '#555555', fontSize: font.base, lineHeight: 18 },
 
-  statBox:    { alignItems: 'center', alignSelf: 'center', marginRight: 12 },
+  statBox:    { alignItems: 'center', alignSelf: 'center' },
+  refreshBtn: { alignSelf: 'center', paddingHorizontal: 8 },
+  refreshIcon: { color: '#555555', fontSize: 22 },
   statNumber: { color: colors.textPrimary, fontSize: font.lg, fontWeight: font.black, lineHeight: 24 },
   statLabel:  { color: '#444444', fontSize: 8, fontWeight: font.bold, letterSpacing: 1, lineHeight: 16 },
 

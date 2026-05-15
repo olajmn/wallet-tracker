@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react';
-import { ActivityIndicator, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Modal, RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { styles, SCREEN_W } from './ProfileScreen.styles';
 import { useProfile } from './useProfile';
 
 export default function ProfileScreen() {
   const scrollRef = useRef<ScrollView>(null);
-  const { userData, updateUser, activeWallet, setActiveWallet, walletDataMap, loading, totalSOL, totalUSD, onScroll, charWord, snapshotMap } = useProfile();
+  const { userData, updateUser, activeWallet, setActiveWallet, walletDataMap, loading, refreshing, onRefresh, totalSOL, totalUSD, onScroll, charWord, snapshotMap } = useProfile();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [input, setInput] = useState('');
@@ -33,7 +33,11 @@ export default function ProfileScreen() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#555555" />}
+    >
 
       {/* HEADER */}
       <View style={styles.header}>

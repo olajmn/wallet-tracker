@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import { fetchWalletData, WalletData } from '../../services/walletService';
 import { loadSnapshotsForAddress, saveSnapshots, Snapshot } from '../../services/snapshotService';
@@ -11,7 +11,33 @@ export function useProfile() {
   const [activeWallet, setActiveWallet] = useState(0);
   const [walletDataMap, setWalletDataMap] = useState<Map<string, WalletData | null>>(new Map());
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [snapshotMap, setSnapshotMap] = useState<Map<string, Snapshot[]>>(new Map());
+
+  const fetchAll = useCallback(async (wallets: string[]) => {
+    if (wallets.length === 0) { setLoading(false); setWalletDataMap(new Map()); return; }
+    setWalletDataMap(new Map());
+    const results = await Promise.all(
+      wallets.map(addr =>
+        fetchWalletData(addr)
+          .then(data => [addr, data] as [string, WalletData])
+          .catch(() => [addr, null] as [string, null])
+      )
+    );
+    const map = new Map(results);
+    setWalletDataMap(map);
+    setLoading(false);
+    const snapshotEntries = [...map.entries()]
+      .filter(([, w]) => w !== null)
+      .map(([addr, w]) => ({ address: addr, solBalance: w!.solBalance }));
+    await saveSnapshots(snapshotEntries);
+    const snapEntries = await Promise.all(
+      wallets.map(addr =>
+        loadSnapshotsForAddress(addr).then(snaps => [addr, snaps] as [string, Snapshot[]])
+      )
+    );
+    setSnapshotMap(new Map(snapEntries));
+  }, []);
 
   useEffect(() => {
     if (userData.wallets.length === 0) return;
@@ -23,30 +49,15 @@ export function useProfile() {
   }, [userData.wallets.join(',')]);
 
   useEffect(() => {
-    if (userData.wallets.length === 0) { setLoading(false); setWalletDataMap(new Map()); return; }
     setLoading(true);
-    Promise.all(
-      userData.wallets.map(addr =>
-        fetchWalletData(addr)
-          .then(data => [addr, data] as [string, WalletData])
-          .catch(() => [addr, null] as [string, null])
-      )
-    ).then(results => {
-      const map = new Map(results);
-      setWalletDataMap(map);
-      setLoading(false);
-      const snapshotEntries = [...map.entries()]
-        .filter(([, w]) => w !== null)
-        .map(([addr, w]) => ({ address: addr, solBalance: w!.solBalance }));
-      saveSnapshots(snapshotEntries).then(() =>
-        Promise.all(
-          userData.wallets.map(addr =>
-            loadSnapshotsForAddress(addr).then(snaps => [addr, snaps] as [string, Snapshot[]])
-          )
-        ).then(e => setSnapshotMap(new Map(e)))
-      );
-    });
+    fetchAll(userData.wallets);
   }, [userData.wallets.join(',')]);
+
+  async function onRefresh() {
+    setRefreshing(true);
+    await fetchAll(userData.wallets);
+    setRefreshing(false);
+  }
 
   const totalSOL = [...walletDataMap.entries()].reduce((sum, [addr, w]) => {
     if (w) return sum + w.solBalance;
@@ -60,5 +71,5 @@ export function useProfile() {
     setActiveWallet(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W));
   }
 
-  return { userData, updateUser, activeWallet, setActiveWallet, walletDataMap, loading, totalSOL, totalUSD, onScroll, charWord, snapshotMap };
+  return { userData, updateUser, activeWallet, setActiveWallet, walletDataMap, loading, refreshing, onRefresh, totalSOL, totalUSD, onScroll, charWord, snapshotMap };
 }

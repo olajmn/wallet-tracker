@@ -19,10 +19,16 @@ export type WalletData = {
   totalUSD: number;
 };
 
+let cachedPrice = 0;
+let cacheTime = 0;
+
 async function fetchSolPrice(): Promise<number> {
+  if (Date.now() - cacheTime < 60_000) return cachedPrice;
   const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
   const data = await res.json();
-  return data.solana?.usd ?? 0;
+  cachedPrice = data.solana?.usd ?? cachedPrice;
+  cacheTime = Date.now();
+  return cachedPrice;
 }
 
 export async function fetchWalletData(address: string): Promise<WalletData> {

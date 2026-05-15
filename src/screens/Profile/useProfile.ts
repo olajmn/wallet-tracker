@@ -48,7 +48,11 @@ export function useProfile() {
     });
   }, [userData.wallets.join(',')]);
 
-  const totalSOL = [...walletDataMap.values()].reduce((sum, w) => sum + (w?.solBalance ?? 0), 0);
+  const totalSOL = [...walletDataMap.entries()].reduce((sum, [addr, w]) => {
+    if (w) return sum + w.solBalance;
+    const lastSnap = (snapshotMap.get(addr) ?? []).at(-1);
+    return sum + (lastSnap?.solBalance ?? 0);
+  }, 0);
   const totalUSD = [...walletDataMap.values()].reduce((sum, w) => sum + (w?.totalUSD ?? 0), 0);
   const charWord = useMemo(() => charWords[Math.floor(Math.random() * charWords.length)], []);
 
@@ -56,5 +60,5 @@ export function useProfile() {
     setActiveWallet(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W));
   }
 
-  return { userData, updateUser, activeWallet, walletDataMap, totalSOL, totalUSD, onScroll, charWord, snapshotMap };
+  return { userData, updateUser, activeWallet, setActiveWallet, walletDataMap, loading, totalSOL, totalUSD, onScroll, charWord, snapshotMap };
 }

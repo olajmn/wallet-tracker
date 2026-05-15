@@ -42,7 +42,7 @@ export const styles = StyleSheet.create({
 
   divider: { height: 1, backgroundColor: '#1A1A1A', marginHorizontal: spacing.xl, marginBottom: 20 },
 
-  pager: { flexGrow: 0 },
+  pager: { flexGrow: 0, width: SCREEN_W },
   walletPage: { paddingBottom: 8 },
   walletHeader: {
     flexDirection: 'row',
@@ -134,5 +134,7 @@ export const styles = StyleSheet.create({
   },
   solAmount:  { color: colors.textPrimary, fontSize: font.xl, fontWeight: font.black, marginTop: 4 },
   solUSD:     { color: '#555555', fontSize: font.base, fontWeight: font.medium, marginTop: 4 },
+  staleLabel:  { color: '#444444', fontSize: font.xs, marginTop: 2 },
+  errorLabel:  { color: '#FF4444', fontSize: font.xs, marginTop: 4 },
   totalUSD:   { color: colors.green, fontSize: font.lg, fontWeight: font.semibold, marginTop: 4 },
 });

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "WAGMI",
-    "slug": "wagmi",
+    "name": "Soltrack",
+    "slug": "soltrack",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +25,18 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "owner": "ojmn",
+    "extra": {
+      "eas": {
+        "projectId": "981a6674-d9fc-436c-8ff0-41f8db7d3ad5"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/981a6674-d9fc-436c-8ff0-41f8db7d3ad5"
     }
   }
 }

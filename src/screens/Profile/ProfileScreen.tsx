@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react';
-import { Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { styles, SCREEN_W } from './ProfileScreen.styles';
 import { useProfile } from './useProfile';
 
 export default function ProfileScreen() {
   const scrollRef = useRef<ScrollView>(null);
-  const { userData, updateUser, activeWallet, walletDataMap, totalSOL, totalUSD, onScroll, charWord, snapshotMap } = useProfile();
+  const { userData, updateUser, activeWallet, setActiveWallet, walletDataMap, loading, totalSOL, totalUSD, onScroll, charWord, snapshotMap } = useProfile();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [input, setInput] = useState('');
@@ -105,11 +105,13 @@ export default function ProfileScreen() {
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
-            onMomentumScrollEnd={onScroll}
+            onScroll={onScroll}
+            scrollEventThrottle={100}
             style={styles.pager}
           >
             {userData.wallets.map((addr, index) => {
               const walletData = walletDataMap.get(addr) ?? null;
+              const lastSnap = (snapshotMap.get(addr) ?? []).at(-1);
               const short = `${addr.slice(0, 6)}...${addr.slice(-4)}`;
               return (
                 <View key={addr} style={[styles.walletPage, { width: SCREEN_W }]}>
@@ -119,12 +121,26 @@ export default function ProfileScreen() {
                   </View>
 
                   <View style={styles.solCard}>
-                    <Text style={styles.solAmount}>
-                      {walletData ? `${walletData.solBalance.toFixed(4)} SOL` : ''}
-                    </Text>
-                    <Text style={styles.solUSD}>
-                      {walletData && walletData.solUSD > 0 ? `$${walletData.solUSD.toFixed(2)}` : '—'}
-                    </Text>
+                    {loading ? (
+                      <ActivityIndicator color="#444444" style={{ alignSelf: 'flex-start', marginVertical: 8 }} />
+                    ) : walletData ? (
+                      <>
+                        <Text style={styles.solAmount}>{walletData.solBalance.toFixed(4)} SOL</Text>
+                        {walletData.solUSD > 0 && (
+                          <Text style={styles.solUSD}>${walletData.solUSD.toFixed(2)}</Text>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {lastSnap && (
+                          <>
+                            <Text style={styles.solAmount}>{lastSnap.solBalance.toFixed(4)} SOL</Text>
+                            <Text style={styles.staleLabel}>last updated {new Date(lastSnap.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</Text>
+                          </>
+                        )}
+                        <Text style={styles.errorLabel}>could not fetch live data</Text>
+                      </>
+                    )}
                   </View>
 
                   {(() => {
@@ -167,11 +183,28 @@ export default function ProfileScreen() {
 
           <View style={styles.dots}>
             {userData.wallets.map((_, i) => (
-              <View key={i} style={[styles.dot, i === activeWallet && styles.dotActive]} />
+              <TouchableOpacity
+                key={i}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                onPress={() => {
+                  scrollRef.current?.scrollTo({ x: i * SCREEN_W, animated: true });
+                  setActiveWallet(i);
+                }}
+              >
+                <View style={[styles.dot, i === activeWallet && styles.dotActive]} />
+              </TouchableOpacity>
             ))}
-            <View style={[styles.dot, styles.dotAdd,
-              activeWallet === userData.wallets.length && styles.dotActive]}
-            />
+            <TouchableOpacity
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              onPress={() => {
+                scrollRef.current?.scrollTo({ x: userData.wallets.length * SCREEN_W, animated: true });
+                setActiveWallet(userData.wallets.length);
+              }}
+            >
+              <View style={[styles.dot, styles.dotAdd,
+                activeWallet === userData.wallets.length && styles.dotActive]}
+              />
+            </TouchableOpacity>
           </View>
         </>
       )}

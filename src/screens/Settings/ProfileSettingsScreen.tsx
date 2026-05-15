@@ -61,7 +61,7 @@ export default function ProfileSettingsScreen() {
       <View style={shared.section}>
         <Text style={styles.label}>EMAIL</Text>
         <TextInput style={shared.input} value={email} onChangeText={setEmail}
-          placeholder="din@email.com" placeholderTextColor="#444"
+          placeholder="your@email.com" placeholderTextColor="#444"
           autoCapitalize="none" autoCorrect={false} keyboardType="email-address" />
       </View>
 

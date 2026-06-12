@@ -42,6 +42,15 @@ export const styles = StyleSheet.create({
   statNumber: { color: colors.textPrimary, fontSize: font.lg, fontWeight: font.black, lineHeight: 24 },
   statLabel:  { color: '#444444', fontSize: 8, fontWeight: font.bold, letterSpacing: 1, lineHeight: 16 },
 
+  settingsBtn: {
+    position: 'absolute',
+    top: 52,
+    right: spacing.xl,
+    zIndex: 10,
+    padding: 8,
+  },
+  settingsBtnText: { color: '#555555', fontSize: 22 },
+
   divider: { height: 1, backgroundColor: '#1A1A1A', marginHorizontal: spacing.xl, marginBottom: 20 },
 
   pager: { flexGrow: 0, width: SCREEN_W },
@@ -76,7 +85,8 @@ export const styles = StyleSheet.create({
 
   totalCard: {
     paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.xl,
+    paddingTop: 90,
+    paddingBottom: spacing.xl,
   },
   totalLabel:  { color: '#555555', fontSize: font.xs, fontWeight: font.heavy, letterSpacing: 1.5, marginBottom: 8 },
   totalAmount: { color: colors.textPrimary, fontSize: 44, fontWeight: font.black, letterSpacing: -1 },

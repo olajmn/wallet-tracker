@@ -1,11 +1,13 @@
 import { useRef, useState } from 'react';
 import { ActivityIndicator, Modal, RefreshControl, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { styles, SCREEN_W } from './ProfileScreen.styles';
 import { useProfile } from './useProfile';
 
 export default function ProfileScreen() {
   const scrollRef = useRef<ScrollView>(null);
-  const { userData, updateUser, activeWallet, setActiveWallet, walletDataMap, loading, refreshing, onRefresh, totalSOL, totalUSD, onScroll, charWord, snapshotMap } = useProfile();
+  const navigation = useNavigation();
+  const { userData, updateUser, activeWallet, setActiveWallet, walletDataMap, loading, refreshing, onRefresh, totalSOL, totalUSD, onScroll, snapshotMap } = useProfile();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [input, setInput] = useState('');
@@ -39,25 +41,9 @@ export default function ProfileScreen() {
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#555555" />}
     >
 
-      {/* HEADER */}
-      <View style={styles.header}>
-        <View style={styles.avatarWrapper}>
-          <View style={styles.avatar} />
-          <View style={styles.charPill}>
-            <Text style={styles.charPillText}>{charWord}</Text>
-          </View>
-        </View>
-        <View style={styles.headerInfo}>
-          <Text style={styles.name}>{userData.name}</Text>
-          <Text style={styles.handle}>{userData.handle}</Text>
-        </View>
-        <View style={styles.statBox}>
-          <Text style={styles.statNumber}>{userData.wallets.length}</Text>
-          <Text style={styles.statLabel}>WALLETS</Text>
-        </View>
-      </View>
-
-      <View style={styles.divider} />
+      <TouchableOpacity style={styles.settingsBtn} onPress={() => navigation.navigate('Settings' as never)}>
+        <Text style={styles.settingsBtnText}>⚙</Text>
+      </TouchableOpacity>
 
       {/* HERO — TOTAL PORTFOLIO */}
       <TouchableOpacity style={styles.totalCard} onPress={() => setHistoryExpanded(e => !e)} activeOpacity={0.8}>

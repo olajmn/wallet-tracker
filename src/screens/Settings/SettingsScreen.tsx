@@ -23,12 +23,6 @@ export default function SettingsScreen() {
           <Text style={styles.rowArrow}>→</Text>
         </TouchableOpacity>
 
-        <View style={styles.divider} />
-
-        <TouchableOpacity style={styles.row} onPress={() => navigation.navigate('ProfileSettings' as never)}>
-          <Text style={styles.rowLabel}>Profile</Text>
-          <Text style={styles.rowArrow}>→</Text>
-        </TouchableOpacity>
       </View>
 
     </View>

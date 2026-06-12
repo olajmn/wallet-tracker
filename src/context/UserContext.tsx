@@ -1,25 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { placeholderUser } from '../mock/placeholderUser';
 
 export type UserData = {
-  name:     string;
-  handle:   string;
-  email:    string;
-  bio:      string;
-  location: string;
-  joined:   string;
-  wallets:  string[];
+  wallets: string[];
 };
 
 const DEFAULT: UserData = {
-  name:     placeholderUser.name,
-  handle:   placeholderUser.handle,
-  email:    placeholderUser.email,
-  bio:      placeholderUser.bio,
-  location: placeholderUser.location,
-  joined:   placeholderUser.joined,
-  wallets:  [],
+  wallets: [],
 };
 
 const STORAGE_KEY = 'userData';

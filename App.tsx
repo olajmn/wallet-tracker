@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { tabs } from './src/config/navigation';
 import { UserProvider } from './src/context/UserContext';
 import WalletsScreen from './src/screens/Settings/WalletsScreen';
-import ProfileSettingsScreen from './src/screens/Settings/ProfileSettingsScreen';
+import SettingsScreen from './src/screens/Settings/SettingsScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -48,8 +48,8 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Tabs" component={TabNavigator} />
+          <Stack.Screen name="Settings" component={SettingsScreen} />
           <Stack.Screen name="Wallets" component={WalletsScreen} />
-          <Stack.Screen name="ProfileSettings" component={ProfileSettingsScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserProvider>

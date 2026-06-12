@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import { fetchWalletData, WalletData } from '../../services/walletService';
 import { loadSnapshotsForAddress, saveSnapshots, Snapshot } from '../../services/snapshotService';
 import { useUser } from '../../context/UserContext';
-import { charWords } from '../../mock/charWords';
 import { SCREEN_W } from './ProfileScreen.styles';
 
 export function useProfile() {
@@ -65,11 +64,10 @@ export function useProfile() {
     return sum + (lastSnap?.solBalance ?? 0);
   }, 0);
   const totalUSD = [...walletDataMap.values()].reduce((sum, w) => sum + (w?.totalUSD ?? 0), 0);
-  const charWord = useMemo(() => charWords[Math.floor(Math.random() * charWords.length)], []);
 
   function onScroll(e: NativeSyntheticEvent<NativeScrollEvent>) {
     setActiveWallet(Math.round(e.nativeEvent.contentOffset.x / SCREEN_W));
   }
 
-  return { userData, updateUser, activeWallet, setActiveWallet, walletDataMap, loading, refreshing, onRefresh, totalSOL, totalUSD, onScroll, charWord, snapshotMap };
+  return { userData, updateUser, activeWallet, setActiveWallet, walletDataMap, loading, refreshing, onRefresh, totalSOL, totalUSD, onScroll, snapshotMap };
 }
